@@ -16,7 +16,7 @@ pids
 *.seed
 *.pid.lock
 
-index.exe
+*.exe
 index
 yarn.lock
 
