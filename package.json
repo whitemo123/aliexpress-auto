@@ -1,0 +1,15 @@
+{
+  "name": "mall-auto",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "dependencies": {
+    "inquirer": "8.2.0",
+    "md5": "^2.3.0",
+    "request": "^2.88.2"
+  },
+  "scripts": {
+    "build:exe": "pkg index.js -t node18-win-x64",
+    "build:mac": "pkg index.js -t node18-macos-x64"
+  }
+}
