@@ -127,8 +127,7 @@ const httpGet = (source_url, otherUrl, method, data, first) => {
         }
         resolve(jsonData.data.data)
       } catch (e) {
-        closeTimer()
-        throw new Error('JSON解析错误：' + e)
+        logger('JSON解析错误' + response.body, 'danger')
       }
     })
   })
@@ -191,7 +190,7 @@ const getList = () => {
     logger("开始获取数据")
     const filter = filterTgingList(JSON.parse(JSON.stringify(e.dataSource)))
     if (!filter.length) {
-      logger(`暂时没有达到曝光量：${globalData.bgl}或点击量：${globalData.djl}的商品`, 'danger')
+      logger(`暂时没有达到曝光量${globalData.bgl}或点击量${globalData.djl}的商品`, 'danger')
     } else {
       pauseShop(filter)
     }
