@@ -9,7 +9,7 @@
     "request": "^2.88.2"
   },
   "scripts": {
-    "build:exe": "pkg index.js -t node18-win-x64",
+    "build:exe": "pkg index.js -t node18-win-x64 --out-path=dist",
     "build:mac": "pkg index.js -t node18-macos-x64"
   }
 }
