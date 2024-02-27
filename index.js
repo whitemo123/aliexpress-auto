@@ -4,7 +4,7 @@ const md5 = require('md5');
 
 let timer = null
 
-const version = 'v1.0'
+const version = 'v1.1'
 
 let globalData = {}
 
@@ -111,7 +111,11 @@ const httpGet = (source_url, otherUrl, method, data, first) => {
       options.headers['Content-Type'] = 'application/x-www-form-urlencoded'
     }
     request(options, async function (error, response) {
-      if (error) throw new Error(error);
+      if (error) {
+        logger("request失败" + error, 'danger')
+        reject(null)
+        return
+      }
       try {
         const jsonData = JSON.parse(response.body)
         if (!jsonData.data.data) {
@@ -122,12 +126,15 @@ const httpGet = (source_url, otherUrl, method, data, first) => {
             resolve(fetchRes)
             return
           }
-          closeTimer()
-          throw new Error("请求失败：" + JSON.stringify(jsonData))
+          logger("请求失败" + JSON.stringify(jsonData), 'danger')
+          reject(null)
+          return
+        } else {
+          resolve(jsonData.data.data)
         }
-        resolve(jsonData.data.data)
       } catch (e) {
         logger('JSON解析错误' + response.body, 'danger')
+        reject(null)
       }
     })
   })
@@ -147,7 +154,7 @@ const pauseShop = (arr) => {
       const item = arr[i]
       logger(`商品"${item.productId}/${item.solutionName}/点击量${item.click}/曝光量${item.exposure}"暂停成功`, 'success')
     }
-  })
+  }).catch(err => {})
 }
 
 /**
@@ -187,13 +194,15 @@ const getList = () => {
   const url = 'mtop.aliexpress.ad.bp.maxwell.solutionunit.list.query'
   const other_url = `H5Request=${url}&`
   httpGet(url, other_url, 'GET', param, true).then(e => {
-    logger("开始获取数据")
+    logger(`开始获取数据(${globalData.time}分钟)`)
     const filter = filterTgingList(JSON.parse(JSON.stringify(e.dataSource)))
     if (!filter.length) {
       logger(`暂时没有达到曝光量${globalData.bgl}或点击量${globalData.djl}的商品`, 'danger')
     } else {
       pauseShop(filter)
     }
+  }).catch(err => {
+
   })
 }
 
@@ -251,7 +260,7 @@ const main = () => {
     getList()
     timer = setInterval(() => {
       getList()
-    }, (Number(globalData.time) * 60 * 1000))
+    }, (parseFloat(globalData.time) * 60 * 1000))
   });
 }
 
